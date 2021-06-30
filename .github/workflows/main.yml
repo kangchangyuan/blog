@@ -30,7 +30,7 @@ jobs:
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@3.7.1
       with:
-        ACCESS_TOKEN: ${{ secrets.DEPLOY_KEY }}
+        ACCESS_TOKEN: ${{ secrets.BLOG_SECRET}}
         BRANCH: main
         FOLDER: docs-dist
         REPOSITORY_NAME: kangchangyuan/kangchangyuan.github.io
