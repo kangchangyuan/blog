@@ -1,7 +1,8 @@
 ---
+title: HOLIDAY BLOG
 hero:
   title: HOLIDAY
-  desc: 深圳人天天就想着怎么搞钱
+  desc: 深圳人天天就想着怎么搞钱 🤑
   actions:
     - text: 进去看看
       link: /practice

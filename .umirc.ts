@@ -21,7 +21,7 @@ export default defineConfig({
     },
     {
       title: 'GitHub',
-      path: 'https://github.com/kangchangyuan/kangchangyuan.github.io',
+      path: 'https://github.com/kangchangyuan/blog',
     },
   ]
 });
