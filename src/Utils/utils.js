@@ -1,33 +1,32 @@
-# Utils工具类
-## isObject
-```js
+
+// isObject
+
 const isObject = val => Object.prototype.toString.call(val)==='[object Object]'
-```
-## isArray
-```js
+
+// isArray
+
 const isArray = val =>!!val && Array.isArray(val)
-```
-## isBoolean
-```js
+
+// isBoolean
+
 const isBoolean = val =>typeof val === 'boolean'
-```
-## isFunction
-```js
+
+// isFunction
+
 const isFunction = val =>val && typeof val === 'function'
-```
-## isNumber
-```js
+
+// isNumber
+
 const isNumber = val => typeof val === 'number'
-```
-## isString
-```js
+
+// isString
+
 const isString = val => typeof val === 'string'
-```
-## countDown
-```js
+
+// countDown
 const countDown=(n)=>{
   let t = setTimeout(()=>{
     n?countDown(--n): clearTimeout(t) 
   },1000)
 }
-```
+countDown(10)
