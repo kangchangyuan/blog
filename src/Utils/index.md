@@ -31,3 +31,9 @@ const countDown=(n)=>{
   },1000)
 }
 ```
+## isInArray
+```js
+// const fileType = ['excel','image','markdown','pdf','ppt','text','word','zip']
+// isInArray(fileType,'excel') true
+const isInArray = (arr,val) => arr.includes(val)
+```
