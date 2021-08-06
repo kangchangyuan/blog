@@ -37,3 +37,22 @@ const countDown=(n)=>{
 // isInArray(fileType,'excel') true
 const isInArray = (arr,val) => arr.includes(val)
 ```
+## getFileName
+```js
+// ppt.js
+const getFileName = (str) => str.substring(0,str.lastIndexOf('.'))
+```
+## getExtension
+```js
+const getExtension = (str) => str.substring(0,str.lastIndexOf('.')+1)
+```
+## waitTime
+```js
+const waitTime = (time: number = 100) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, time);
+  });
+};
+```
