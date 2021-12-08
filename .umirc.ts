@@ -1,14 +1,12 @@
 import { defineConfig } from 'dumi';
 
 export default defineConfig({
-  title: 'Holiday',
-  favicon: 'https://user-images.githubusercontent.com/9554297/83762004-a0761b00-a6a9-11ea-83b4-9c8ff721d4b8.png',
-  logo: 'https://user-images.githubusercontent.com/9554297/83762004-a0761b00-a6a9-11ea-83b4-9c8ff721d4b8.png',
+  title: 'PENGUIN',
   outputPath: 'docs-dist',
   mode: 'site',
-  navs:[
+  navs: [
     {
-      title: '修行',
+      title: '文档',
       path: '/practice',
     },
     {
@@ -21,7 +19,7 @@ export default defineConfig({
     },
     {
       title: 'GitHub',
-      path: 'https://github.com/kangchangyuan/blog',
+      path: 'https://github.com/kangchangyuan',
     },
-  ]
+  ],
 });
