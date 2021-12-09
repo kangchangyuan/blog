@@ -6,16 +6,27 @@ export default defineConfig({
   mode: 'site',
   navs: [
     {
-      title: '文档',
-      path: '/practice',
+      title: 'HTML',
     },
     {
-      title: '工具类',
-      path: '/utils',
+      title: 'CSS',
     },
     {
-      title: '随笔',
-      path: '/rich',
+      title: 'JavaScript',
+      path: '/js',
+    },
+    {
+      title: 'TypeScript',
+    },
+    {
+      title: 'Node',
+    },
+    {
+      title: 'MongoDB',
+    },
+    {
+      title: '笔记',
+      path: '/essay',
     },
     {
       title: 'GitHub',
