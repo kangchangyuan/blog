@@ -5,25 +5,25 @@ export default defineConfig({
   outputPath: 'docs-dist',
   mode: 'site',
   navs: [
-    {
-      title: 'HTML',
-    },
-    {
-      title: 'CSS',
-    },
+    // {
+    //   title: 'HTML',
+    // },
+    // {
+    //   title: 'CSS',
+    // },
     {
       title: 'JavaScript',
       path: '/js',
     },
-    {
-      title: 'TypeScript',
-    },
-    {
-      title: 'Node',
-    },
-    {
-      title: 'MongoDB',
-    },
+    // {
+    //   title: 'TypeScript',
+    // },
+    // {
+    //   title: 'Node',
+    // },
+    // {
+    //   title: 'MongoDB',
+    // },
     {
       title: '笔记',
       path: '/essay',

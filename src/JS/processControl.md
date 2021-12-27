@@ -182,6 +182,7 @@ for (const key in people) {
 多用于遍历数组，map,set,字符串，有点可以同时获取 key 和 value
 
 - keys() 获取所有的 key 值
+- values() 获取所有的 value
 - entries() 获取[key,value]
 
 ```js
