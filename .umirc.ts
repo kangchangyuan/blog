@@ -2,6 +2,8 @@ import { defineConfig } from 'dumi';
 
 export default defineConfig({
   title: 'PENGUIN',
+  favicon: '/penguin.png',
+  logo: '/penguin.png',
   outputPath: 'docs-dist',
   mode: 'site',
   navs: [
