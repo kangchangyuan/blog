@@ -100,14 +100,205 @@ console.log(url); // 对于不需要的变量使用,只取需要的变量
 console.log(name); // 对于获取不到的变量可以设置默认值
 ```
 
-## 元素增减
+## 数组增减
 
 ### push()
 
-从数组后面追加元素
+从数组后面追加元素，会改变原数组
 
 ```js
 const arr = [1, 2, 3];
 console.log(arr.push(2, 3)); // 5 返回的是数组的length
 console.log(arr); // [1,2,3,2,3]
+```
+
+### pop()
+
+从数组后面删除，会改变原数组
+
+```js
+const arr = [1, 2, 3];
+console.log(arr.pop()); //  3  去除的元素
+console.log(arr); // [1,2]
+```
+
+### shift()
+
+取出数组的第一个元素,不会改变原数组
+
+```js
+const arr = [1, 2, 3];
+console.log(arr.shift()); // 1
+console.log(arr); // [1,2,3]
+```
+
+### unshift()
+
+在数组开头添加元素，会改变原数组
+
+```js
+const animal = ['lion', 'tiger', 'fox', 'penguin'];
+console.log(animal.unshift('elephant', 'dog')); // 6 返回数组的长度
+console.log(animal); // ['elephant','dog','lion','tiger','fox','penguin']
+```
+
+### fill()
+
+填充数组，数组必须有长度才可以添加
+
+```js
+console.log(Array(2).fill(4)); // [4,4]
+const arr = [, ,]; //等价于 arr.length=2
+console.log(arr.fill('penguin')); // ['penguin','penguin']
+
+// 指定位置添加 [index,index) 前闭后开区间，两个值相同时填充无效
+// 大于数组长度时按数组的最大长度，和第二个参数不填效果一样
+const animal = ['elephant', 'tiger', 'fox'];
+console.log(animal.fill('dog', 1, 1)); // ['elephant','tiger','fox']
+console.log(animal.fill('dog', 1, 2)); // ['elephant','dog','fox']
+console.log(animal.fill('dog', 1, 3)); // ['elephant','dog','dog']
+console.log(animal.fill('dog', 1, 10)); // ['elephant','dog','dog']
+console.log(animal.fill('dog', 1)); // ['elephant','dog','dog']
+```
+
+### slice()
+
+截取数组，相对去 shift 和 pop，slice 可以获取多个元素，不会改变原数组
+
+```js
+// [index,index)
+const fruit = ['apple', 'banana', 'grape', 'strawberry'];
+console.log(fruit.slice(1, 2)); // ['banana']
+console.log(fruit); // ['apple','banana','grape','strawberry']
+```
+
+### splice()
+
+很综合的一个方法，可以增，删，替换数组中的元素，会改变原数组，返回删除的元素。第一个参数是开始下标，第二个参数是数量，第三个参数(可以是多个值)，插入都替换的位置上，可以比原来的元素多
+
+```js
+const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+console.log(arr.splice(2, 5)); // [3,4,5,6,7]
+console.log(arr); // [1,2,8,9]
+```
+
+替换元素
+
+```js
+const arr = [1, 2, 3, 4, 5, 6];
+console.log(arr.splice(1, 3, 'penguin', 'dog', 'tiger', 'lion')); // [2,3,4] =>['penguin','dog','tiger','lion']
+console.log(arr); // [1,'penguin','dog','tiger','lion',5,6]
+```
+
+向前后追加元素
+
+```js
+const arr = [1, 2, 3];
+
+console.log(arr.splice(arr.length, 0, 'penguin', 'elephant')); // []
+console.log(arr); // [1,2,3,'penguin','elephant']
+
+console.log(arr.splice(0, 0, 'lion')); // []
+console.log(arr); // ['lion', 1,2,3,'penguin','elephant']
+```
+
+数组元素移动
+
+```js
+function move(targetArr, from, to) {
+  if (from < 0 || to >= targetArr.length) {
+    throw Error('参数越界了！');
+  }
+  let newArr = [...targetArr];
+  let targetItem = newArr.splice(from, 1);
+  newArr.splice(to, 0, ...targetItem);
+  return newArr;
+}
+console.log(move([1, 2, 3, 4], 2, 0)); // [3,1,2,4]
+```
+
+### 清空数组
+
+把数组赋值成[]
+
+```js
+//  使用const 定义的数组不可以赋值为[],let 可以
+const arr2 = [1, 2, 3];
+const users = [{ name: 'penguin' }, { name: 'elephant' }];
+console.log((arr2 = [])); //Uncaught TypeError: Assignment to constant variable.
+
+// 对于多个数组的引用来说，两个数组同时指向的是同一块内存空间
+// 当数组置空是可以看作重新开辟了一块内存空间，不会改变剩下的数组引用
+let arr1 = [1, 2, 3];
+let arr2 = arr1;
+arr1 = [];
+console.log(arr2); // [1,2,3]
+let students = [{ name: 'penguin' }, { name: 'elephant' }];
+let classmans = students;
+students = [];
+console.log(classmans); // [{name:'penguin'},{name:'elephant'}]
+```
+
+length=0 会直接把引用内存的空间地址直接清空，关联数组都变成空
+
+```js
+let arr1 = [1, 2, 3];
+let arr2 = arr1;
+arr1.length = 0;
+console.log(arr1); // []
+console.log(arr2); // []
+```
+
+## 合拼拆分
+
+### join()
+
+不传参默认是以,连接 join(',') 等价于 jion()
+
+```js
+const someword = ['I', 'am', 'penguin'];
+console.log(someword.join()); // I,am,penguin
+console.log(someword.join('*')); // I*am*penguin
+```
+
+### split()
+
+和 join 相反的操作
+
+```js
+const someword = 'I,am,penguin';
+console.log(someword.split(',')); // ['I','am', 'penguin']
+```
+
+### concat()
+
+合并两个数组，用...语法更加简单直观
+
+```js
+const animal = ['penguin', 'lion'];
+const fruit = ['grape', 'strawberry'];
+const name = ['zhang', 'kang'];
+
+const mergeArr = animal.concat(fruit, name);
+console.log(mergeArr); // ['penguin','lion','grape','strawberry','zhang','kang']
+
+const result = [...animal, ...fruit];
+console.log(result); // ['penguin','lion','grape','strawberry']
+```
+
+### copyWithin()
+
+copyWithin(target,start,end) target 复制到数组的位置下标，start 开始复制下标，end 结束下标
+
+```js
+/**
+ * 会入侵目标位置上的元素，复制的元素会覆盖目标下标之后的元素，而不是插入
+ * 会改变原数组
+ * end 可以越界结果是一致的
+ * start 不能为负数，负数无效结果还是原数组
+ * [start,end)
+ */
+const arr1 = [1, 2, 3, 4, 5, 6, 7];
+console.log(arr1.copyWithin(4, -1, 3)); // [1,2,3,4,2,3,7]
+console.log(arr1); // [1,2,3,4,2,3,7]
 ```
