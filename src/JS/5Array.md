@@ -163,7 +163,7 @@ console.log(animal.fill('dog', 1)); // ['elephant','dog','dog']
 
 ### slice()
 
-截取数组，相对去 shift 和 pop，slice 可以获取多个元素，不会改变原数组
+截取数组，相对于 shift 和 pop，slice 可以获取多个元素，不会改变原数组
 
 ```js
 // [index,index)
@@ -299,6 +299,174 @@ copyWithin(target,start,end) target 复制到数组的位置下标，start 开�
  * [start,end)
  */
 const arr1 = [1, 2, 3, 4, 5, 6, 7];
-console.log(arr1.copyWithin(4, -1, 3)); // [1,2,3,4,2,3,7]
+console.log(arr1.copyWithin(4, 1, 3)); // [1,2,3,4,2,3,7]
 console.log(arr1); // [1,2,3,4,2,3,7]
+
+const arr2 = [1, 2, 3, 4, 5];
+console.log(arr1.copyWithin(4, -1, 3)); // [1,2,3,4,5]
+```
+
+## 查找元素
+
+### indexOf()
+
+查找元素，找到返回下标，未找到返回 -1，是严格匹配，1 和'1' 是不同的
+
+```js
+const zoo = ['penguin', 'lion', 'elephant', 1];
+console.log(zoo.indexOf('lion')); // 1
+console.log(zoo.indexOf('1')); // -1
+
+//  lastIndexOf 和 indexOf 的区别在于从右往左查找
+console.log(zoo.lastIndexOf('elephant')); // 2
+```
+
+### includes()
+
+// 查找的结果为 Boolean 值
+
+```js
+const fruit = ['strawberry', 'apple', 'banana'];
+console.log(fruit.includes('apple')); // true
+
+function includes(arr, key) {
+  for (let item of arr) {
+    if (item == key) return true;
+  }
+  return false;
+}
+```
+
+### find()
+
+可以用来查找引用类型 返回找的的结果值或者 undefined(找到就不继续了)
+
+```js
+let userInfo = [{ name: 'ZHANG' }, { name: 'LI', name: 'ZHANG' }];
+let result = userInfo.find((item) => item.name == 'ZHANG');
+console.log(result); // {name:'ZHANG'}
+```
+
+find 原理实现
+
+```js
+function find(arr, callback) {
+  for (let item of arr) {
+    if (callback(item)) {
+      return item;
+    }
+  }
+  return undefined;
+}
+```
+
+### findIndex()
+
+返回下标，找不到返回-1
+
+```js
+const arr = [1, 2, 3, 4, 1, 5, 6];
+let result = arr.findIndex((item) => item == 5);
+console.log(result); // 5
+```
+
+## 排序
+
+### reverse()
+
+反转数组顺序
+
+```js
+const arr = [1, 2, 3, 4, 5];
+console.log(arr.reverse()); // [5,4,3,2,1]
+```
+
+### sort()
+
+根据调整从小到大或从大到小排序 Array.sort((a,b)=>a-b
+
+- 负数 从小到大
+- 正数 从大到小
+
+```js
+const arr = [1, 6, 5, 7, 9, 2, 3, 4, 8];
+let min2max = arr.sort((a, b) => a - b);
+console.log(min2max); //[1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+let max2min = arr.sort((a, b) => b - a);
+console.log(max2min); // [9, 8, 7, 6, 5, 4, 3, 2, 1]
+```
+
+## 拓展方法
+
+### every()
+
+遍历所有的元素，所有的元素都要返回真才为真类似串联电路
+
+```js
+const userScore = [
+  { name: 'penguin', score: 60 },
+  { name: 'lion', score: 70 },
+  { name: 'cat', score: 59 },
+];
+let result = userScore.every((animal) => animal.score >= 60);
+// false
+```
+
+### some(item,index?,array?)
+
+只要有一个元素满足就为真
+
+```js
+const userScore = [
+  { name: 'penguin', score: 60 },
+  { name: 'lion', score: 70 },
+  { name: 'cat', score: 59 },
+];
+let result = userScore.some((animal) => animal.score >= 60);
+// true
+```
+
+### filter()
+
+过滤元素，只返回满足条件的元素
+
+```js
+const userScore = [
+  { name: 'penguin', score: 60 },
+  { name: 'lion', score: 70 },
+  { name: 'cat', score: 59 },
+];
+let result = userScore.filter((animal) => animal.score < 60);
+console.log(result); // [{name:'cat',score:59}]
+```
+
+### map()
+
+返回满足条件的元素，但是不直接返回元素，同时会返回 undefined
+
+```js
+const userScore = [
+  { name: 'penguin', score: 60 },
+  { name: 'lion', score: 70 },
+  { name: 'cat', score: 59 },
+];
+let result = userScore.map((animal) => {
+  if (animal.score >= 60) return animal;
+});
+console.log(result); //  [{…}, {…}, undefined]
+```
+
+### reduce((prev,cur,index?,array?)=>{},pre?)
+
+经典的使用场景求和
+
+```js
+const goods = [
+  { name: 'penguin', score: 60 },
+  { name: 'lion', score: 70 },
+  { name: 'cat', score: 59 },
+];
+let result = goods.reduce((toal, goods) => (toal += goods.score), 0);
+console.log(result);
 ```
