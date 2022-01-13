@@ -1,4 +1,6 @@
-# blog
+# Front Notes
+
+Relearning Front End Series
 
 ## Getting Started
 
@@ -14,14 +16,8 @@ Start the dev server,
 $ npm start
 ```
 
-Build documentation,
+## License
 
-```bash
-$ npm run docs:build
-```
+[MIT](https://opensource.org/licenses/MIT)
 
-Build library via `father-build`,
-
-```bash
-$ npm run build
-```
+Copyright (c) 2022-present, kangchangyuan

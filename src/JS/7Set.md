@@ -170,13 +170,13 @@ WeakSet 保存对象不会增加引用计数器，如果一个对象不被引用
 ```js
 let arr = [1, 2, 3];
 // 数组被arr 引用，计数器 +1
-let weakSet = new WeakSet(arr);
+let weakSet = new WeakSet([arr]);
 // 数组被添加到weakset中并不会增加引用数，计数器还是1
 arr = null;
 // arr 设置成null 计数器-1，为0 会触发垃圾回收
 console.log(weakSet);
 // WeakSet{Array(1)} 为啥还有值，垃圾回收不是立即进行的
 setTimeout(() => {
-  console.log(weakSet); // WeakSet{}
+  console.log(weakSet); //  WeakSet{Array(1)} 为啥还有值???
 }, 1000);
 ```
