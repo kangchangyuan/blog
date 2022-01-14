@@ -178,10 +178,161 @@ console.log(sortArr(luckNum, 'desc')); // [9, 8, 7, 6, 5, 1]
 
 ### 函数参数
 
-```js
+函数可以作为参数使用
 
+```js
+function fn(item) {
+  return item >= 3;
+}
+console.log([1, 2, 3, 4, 5].filter(fn)); // [3,4,5]
+```
+
+### arguments
+
+arguments 是函数形参的集合
+
+```js
+function sum() {
+  return [...arguments].reduce((total, num) => (total += num), 0);
+}
+console.log(sum(1, 2, 3, 4, 5, 6)); // 21
+```
+
+使用...语法更好理解
+
+```js
+function sum(...args) {
+  return args.reduce((pre, cur) => pre + cur);
+}
+console.log(sum(1, 2, 3, 4, 5, 6)); // 21
+```
+
+### 箭头函数
+
+- 用箭头简化 function 关键字
+- 如有返回值只有一行表达式可以省略{}
+- 形参只有一个值是可以省略()
+
+```js
+let sum = function (a, b) {
+  return a + b;
+};
+let sum = (a, b) => a + b;
+```
+
+### 递归调用
+
+不断的调用自身来达到循环任务
+
+```js
+// 来看下 3*2*1的阶乘
+function recursive(num) {
+  // if(num==1) return 1
+  // return num*recursive(--num)
+  return num == 1 ? 1 : num * recursive(--num);
+}
+console.log(recursive(3)); // 6
+
+// 用递归完成reduce的操作
+function sum(...num) {
+  // if(num.length==1) return num.pop()
+  // return num.pop() + sum(...num)
+  return num.length == 1 ? num.pop() : num.pop() + sum(...num);
+}
+console.log(sum(1, 2, 3));
 ```
 
 ## this
+
+调用函数时 this 会隐式传递给函数，指的式函数调用关联对象，也被称之为上下文
+
+### 函数调用
+
+```js
+function post() {
+  console.log(this); // window
+}
+// 在严格模式下的全局this是undefined
+('use strict');
+function get() {
+  console.log(this); // undefined
+}
+```
+
+### 方法调用
+
+函数是对象中的方法属性时，此时的 this 指向当前对象
+
+#### 构造函数
+
+定义的函数当被 new 出来即使构造函数，一般构造函数包含属性和方法。函数中的上下文指向被 new 出来的实例对象
+
+- 构造函数就是作用就是用来生成实例对象
+- this 指向当前实例话的对象
+
+```js
+function User() {
+  this.name = 'penguin';
+  this.speak = function () {
+    console.log(this); //User {name: 'penguin', speak: ƒ}
+    console.log(`this user name is ${this.name}`);
+  };
+}
+let people = new User();
+console.log(people.speak());
+```
+
+#### 对象字面量
+
+- 属性方法中的 this 指向当前的对象
+- 属性方法中的方法的 this 指向的时 window
+
+```js
+const animal = {
+  name: 'elephant',
+  cry() {
+    console.log(this); //{name: 'elephant', cry: ƒ}
+    function run() {
+      console.log(this); //window
+    }
+    run();
+  },
+};
+animal.cry();
+```
+
+在方法中的 this 指向时可以改变的，forEach、map 的第二参数传入 this
+
+```js
+let animal = {
+  name: 'elephant',
+  nickname: ['l', 'p'],
+  hasNickName() {
+    return this.nickname.forEach(function (item) {
+      console.log(this); //window
+      console.log(`${this.name}-${item}`);
+    }, this);
+  },
+};
+animal.hasNickName();
+```
+
+#### 箭头函数
+
+- 箭头函数没有 this、arguments
+- 箭头函数的 this 可以理解为指向父级对象中的 this，也可以理解为外层的 this 指向
+
+```js
+const animal = {
+  name: 'elephant',
+  cry() {
+    console.log(this); //{name: 'elephant', cry: ƒ}
+    return () => {
+      console.log(this); // {name: 'elephant', cry: ƒ}
+    };
+  },
+};
+animal.cry();
+```
 
 ## apply、call、bind
