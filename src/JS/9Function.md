@@ -336,3 +336,90 @@ animal.cry();
 ```
 
 ## apply、call、bind
+
+改变 this 指向的方法
+
+- apply 用于数组的传递 apply(null,[])
+- call 用于多个形参传递 call(null,...arguments)
+- bind 和 call、apply 的不同在于不会立即执行，返回新的函数需要调用执行
+
+### 原理分析
+
+构造函数中的 this 是个空对象，在构造函数中可以设置相应的变量和方法
+
+```js
+function Person(name) {
+  // 默认this = {}
+  this.name = name;
+  this.fn = function () {
+    console.log(this.name);
+  };
+}
+let penguin = new Person('penguin');
+```
+
+可以改变原有的构造函数中 this 指向
+
+```js
+function Person(name) {
+  this.name = name;
+}
+let dog = {};
+Person.call(dog, 'PENGUIN'); // 传入dog对象改变了构造函数中的this对象
+console.log(dog.name); // PENGUIN
+```
+
+### apply
+
+```js
+function log(...title) {
+  console.log(title); //  ['apply','penguin']
+  console.log(`${title}-${this.name}`);
+}
+let penguin = {
+  name: 'hanhan',
+};
+let dog = {
+  name: 'action',
+};
+log.apply(penguin, ['apply', 'penguin']);
+```
+
+### call
+
+```js
+function log(title) {
+  console.log(title); //  call
+  console.log(`${title}-${this.name}`);
+}
+let penguin = {
+  name: 'hanhan',
+};
+let dog = {
+  name: 'action',
+};
+log.call(dog, 'call');
+```
+
+### bind
+
+bind 会复制新的函数，在新的函数调用的时候不能传参
+
+```js
+let fn1 = function () {};
+let fn2 = fn1;
+console.log(fn1 == fn2); // true
+
+// bind 会复制返回一个新的函数
+let fn3 = fn1.bind();
+console.log(fn1 == fn3); // false
+```
+
+```js
+function fn(a, b) {
+  console.log(a, b); // 1，2
+  console.log(this); // {name:'penguin'}
+}
+let newFn = fn.bind({ name: 'penguin' }, 1, 2);
+newFn(3, 4); // 3,4 无效，优先使用在bind中传入的实参，先入为主
+```
