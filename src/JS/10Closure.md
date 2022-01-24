@@ -99,3 +99,89 @@ for (let i = 0; i < 10; i++) {
 }
 console.log(arr[4]()); // 4
 ```
+
+## 闭包列子
+
+### 获取价格区间
+
+用来获取区间值 a 和 b
+
+```js
+let arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+function between(a, b) {
+  return (v) => v >= a && v <= b;
+}
+console.log(arr.filter(between(3, 8)));
+```
+
+### 内存泄漏
+
+闭包特性中上下级作用域会为函数保留数据，从而造成父级中的变量无法在内存中释放
+
+```js
+let btns = document.querySelectorAll('buttom');
+btns.forEach(function (item) {
+  item.addEventListener('click', function () {
+    console.log(item.id);
+  });
+});
+```
+
+上面的例子会造成 item 无法在内存中得到释放，于是改造下，主动释放掉变量内存
+
+```js
+let btns = document.querySelectorAll('buttom');
+btns.forEach(function (item) {
+  let elementId = item.id;
+  item.addEventListener('click', function () {
+    console.log(elementId);
+    console.log(item); // null
+  });
+  item = null;
+});
+```
+
+### this 问题
+
+在闭包里无法访问在父级中正确的 this 值
+
+```js
+let penguin = {
+  name: 'hanhan',
+  speak: function () {
+    // this 这里的this指的是 penguin
+    return function () {
+      // 此时的this是window，按照闭包的特性我们向上找this应该是penguin这个对象
+      // 为啥不是父级的this
+      return this.name;
+    };
+  },
+};
+let a = penguin.speak();
+a(); // undefined
+```
+
+es5 的解决办法,在父级中定义一个变量来接收 this 的值
+
+```js
+let penguin = {
+  name: 'hanhan',
+  speak: function () {
+    let that = this;
+    return function () {
+      return that.name; // hanhan
+    };
+  },
+};
+```
+
+es6 中可以使用箭头函数来解决 this 的指向问题
+
+```js
+let penguin = {
+  name: 'hanhan',
+  speak: function () {
+    return () => this.name;
+  },
+};
+```
