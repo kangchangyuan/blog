@@ -65,11 +65,10 @@ setTimeout(() => console.log('匿名函数打印'), 1000);
 (function () {
   var penguin = 'PENGUIN';
 })();
-console.log(penguin)(
-  // penguin is not defined
 
-  // 之前的插件封装常用到这种方法
-  function () {
+console.log(penguin)// penguin is not defined
+// 之前的插件封装常用到这种方法
+;(function () {
     // 使用id获取节点
     var href = window.location.href;
     window.$ = {
