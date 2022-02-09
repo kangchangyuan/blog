@@ -224,7 +224,9 @@ console.log(info); // {name:'🐧', age:2, site:'www.penguin.com'}
 
 ## 对象转换
 
-### 对象直接参与计算式，系统会根据场景进行隐式转换 string\number\default
+### 基础知识
+
+对象直接参与计算式，系统会根据场景进行隐式转换 string\number\default
 
 - 如果场景需要字符串类型，调用的顺序为 toString->valueOf
 - 如果场景需要数值类型，调用的顺序为 valueOf->toString
@@ -248,4 +250,215 @@ console.log(num + '4'); // '14'
 ```js
 let num = new Number(2);
 console.log(num == '2'); // true
+```
+
+### Symbol.toPrimitive
+
+内部自定义 Symbol.toPrimitive 方法来处理所有的转换场景
+
+```js
+let pet = {
+  [Symbol.toPrimitive](hint) {
+    console.log(hint);
+  },
+};
+// 下面分别转换成number string default进行运算
+console.log(+pet); //number
+console.log(`${pet}`); // string
+console.log(pet + ''); // default
+```
+
+### valueOf\toString
+
+可以自定义对象的 valueOf\toString 的返回值
+
+```js
+let penguin = {
+  name: 'lucky',
+  age: 2,
+};
+console.log(penguin.valueOf()); // {name:'lucky',age:2}
+console.log(penguin.toString()); // [object Object]
+let elephant = {
+  name: 'lucky',
+  age: 18,
+  toString() {
+    return this.name;
+  },
+  valueOf() {
+    return this.age;
+  },
+};
+console.log(elephant + 1); // 19
+console.log(`${elephant} is very cute!`); // lucky is very cute!
+```
+
+## 解构赋值
+
+解构事一种更加简洁的赋值特性，可以理解为分解一个数据的结构
+
+### 基本使用
+
+常规对象赋值解构
+
+```js
+let penguin = { name: 'lucky', age: 2 };
+let { name, age: currentAge } = penguin;
+console.log(name); // lucky
+// 重新定义赋值变量的名称需要写在原有变量名称的后面
+console.log(currentAge); // 2
+```
+
+接收函数的返回值
+
+```js
+function sum() {
+  return {
+    name: 'penguin',
+    age: 2,
+  };
+}
+const { name, age } = sum();
+console.log(age); // 2
+```
+
+函数中传参和默认参数
+
+```js
+function creatObj({ name, age = 3 }) {
+  console.log(name);
+}
+creatObj({ name: 'penguin' });
+```
+
+### 简洁定义
+
+变量名和赋值的变量名相同时可以简写
+
+```js
+let name = 'penguin';
+let penguin = {
+  name,
+  age: 15,
+};
+console.log(penguin); // {name:'penguin',age:15}
+```
+
+只解构部分的变量名
+
+- 数组在前面添加多个[,,,define]
+- 对象在前面必须要指定一个变量可以为{_,_,define}
+
+```js
+let [, age] = ['penguin', 15];
+console.log(age); // 15
+let { _, age } = { name: 'penguin', age: 15 };
+concole.log(age); // 15
+```
+
+### 嵌套解构
+
+可以操作多层复杂的数据结构
+
+```js
+const penguin = {
+  name: 'pale',
+  girlInfo: {
+    name: 'origin',
+  },
+  interest: ['football', 'piano'],
+};
+let {
+  _,
+  girlInfo: { name },
+  interest: [, musical],
+} = penguin;
+console.log(name); // origin
+console.log(musical); //piano
+```
+
+## 属性管理
+
+### 添加属性
+
+```js
+let penguin = { name: 'penguin' };
+penguin.age = 15;
+penguin['nicknam'] = '🐧';
+console.log(penguin); // {name:'penguin',age:15,nickname:'🐧'}
+```
+
+### 删除属性
+
+```js
+let pet = { name: 'penguin', age: 15, nickname: '🐧' };
+delete pet.name;
+console.log(pet); // {age:15,nickname:'🐧'}
+```
+
+### 检测属性
+
+hasOwnProperty 检测对象自身是否包含指定的属性，不检测原型链上继承的属性
+
+```js
+let pet = { name: 'penguin', age: 15, nickname: '🐧' };
+console.log(pet.hasOwnProperty('name')); // true
+console.log(pet.hasOwnProperty('udid')); // false
+```
+
+数组相关属性
+
+```js
+const arr = [1, 2, 3, true];
+console.log(arr.hasOwnProperty('length')); // true
+console.log(arr.hasOwnProperty('concat')); // false
+// concat 数组对象能用不代表时其本身的属性
+```
+
+使用 in 来检测是否时原型对象上的属性
+
+```js
+let obj = { a: 1 };
+let bear = { name: '🐻' };
+Object.setPrototypeOf(obj, bear);
+console.log(obj); // 这时obj的原型时bear，bear的原型时顶层Object
+
+console.log('name' in obj); // true name是bear的属性，bear又是obj的原型所以为真
+console.log(obj.hasOwnProperty('name')); // false
+```
+
+### 获取属性名
+
+```js
+let penguin = { name: 'penguin', age: 15, nickname: '🐧' };
+const propertyNames = Object.getOwnPropertyNames(penguin);
+console.log(propertyNames); // [name,age,nickname]
+```
+
+### 复制属性
+
+Object.assign 可以复制一个或多个对象的属性值
+
+```js
+let fox = { name: 'foxmail' };
+fox = Object.assign(fox, { age: 1, nickname: 'knight' }, { interest: 'piano' });
+console.log(fox); // {name:'foxmail',age:1,nickname:'knight',interest:'piano'}
+```
+
+### 计算属性
+
+```js
+
+```
+
+### 传值操作
+
+对象是引用类型赋值操作，本质上时关联同一个内存地址
+
+```js
+let penguin = { name: 'penguin' };
+let frog = penguin;
+frog.name = 'frog';
+// 从penguin的name时frog中可以看出他们时引用的同一个地址，都改变了
+console.log(penguin.name); // frog
 ```
