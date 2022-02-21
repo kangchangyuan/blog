@@ -447,8 +447,18 @@ console.log(fox); // {name:'foxmail',age:1,nickname:'knight',interest:'piano'}
 
 ### 计算属性
 
-```js
+可以使用表达式动态的设置属性名
 
+```js
+const nick = 'cattle';
+function something() {
+  return 'habit';
+}
+let penguin = {
+  [`yellow${nick}`]: 'boy',
+  [something()]: 'piano',
+};
+console.log(penguin); //{yellowcattle: 'boy', habit: 'piano'}
 ```
 
 ### 传值操作
@@ -461,4 +471,393 @@ let frog = penguin;
 frog.name = 'frog';
 // 从penguin的name时frog中可以看出他们时引用的同一个地址，都改变了
 console.log(penguin.name); // frog
+```
+
+## 遍历对象
+
+### 获取内容
+
+```js
+- Object.keys() key值集合
+- Object.values() value集合
+- Object.entries() [[key=>value]]
+const penguin = {
+  name:'bingo',
+  age:2
+}
+console.log(Object.keys(penguin)) // ['name','age']
+console.log(Object.values(penguin)) // ['bingo',2]
+console.log(Object.entries(penguin)) // [['name','bingo'],['age',2]]
+```
+
+### for in
+
+遍历对象的属性
+
+```js
+const penguin = {
+  name: 'bingo',
+  age: 2,
+};
+for (let key in penguin) {
+  console.log(key); // name, age
+}
+```
+
+### for of
+
+用于遍历可迭代的对象*数组就是一种可迭代的对象*，不能直接操作对象，但是可以使用 keys\values\entries 返回可迭代的数组对象来进行遍历
+
+```js
+const penguin = {
+  name: 'bingo',
+  age: 2,
+};
+// 获取key
+for (let key of Object.keys(penguin)) {
+  console.log(key); // name, age
+}
+// 获取value
+for (let value of Object.values(penguin)) {
+  console.log(value); // bingo, 2
+}
+// 同时获取key=>value
+for (let [key, value] of Object.entries(penguin)) {
+  console.log(key, value);
+}
+```
+
+## 对象拷贝
+
+对象赋值时关联地址的一种操作，一个对象的改变会影响其他对象的值
+
+- 拷贝指的时和原对象值相同，地址不同，可以理解为重新复制了一块内存地址
+- 浅拷贝只能对单层的对象进行拷贝隔离，如果时多维的对象只能用深拷贝
+- 深拷贝的可以理解为对多维对象里的每一层都对其进行浅拷贝（递归操作）
+
+### 浅拷贝
+
+使用 for in 进行浅拷贝
+
+```js
+const penguin = { location: 'penguins live in Antarctica' };
+const fox = {};
+for (const key in penguin) {
+  fox[key] = penguin[key];
+}
+console.log(fox == penguin); // false
+```
+
+使用 assign 进行浅拷贝
+
+```js
+let info = { job: 'play piano', money: 200 };
+let someone = {};
+Object.assign(someone, info);
+someone.money = 300;
+console.log(info.money); // 200
+```
+
+浅拷贝推荐使用方法扩展...语法
+
+```js
+let penguin = { location: 'penguins live in Antarctica' };
+let fox = { ...penguin };
+console.log(fox == penguin); // false
+```
+
+### 深拷贝
+
+完全复制一个对象，两个对象是独立的
+
+```js
+let human = {
+  sex: 'female',
+  skills: {
+    walk: 'double leg',
+    eat: 'cooked food',
+  },
+  canFly() {
+    console.log('human can not fly');
+  },
+  ageGroup: ['baby', 'young', 'old'],
+};
+function deepCopy(targetObj) {
+  let currentObj = targetObj instanceof Array ? [] : {};
+  for (const [key, value] of Object.entries(targetObj)) {
+    currentObj[key] = typeof value == 'object' ? deepCopy(value) : value;
+  }
+  return currentObj;
+}
+const people = deepCopy(human);
+people.sex = 'male';
+console.log(JSON.stringify(human, null, 3)); // human中的sex还是female
+console.log(JSON.stringify(people, null, 3)); // people中的sex正常改变为male
+```
+
+## 构建函数
+
+对象可以通过内置或自定义的构造函数创建
+
+### 工厂函数
+
+在函数中返回对象的函数称为工厂函数
+
+- 减少重复创建相同类型对象的代码
+- 修改工厂函数的方法影响所有的同类对象
+  定义两个或多个相同的对象，需要不断的复制，很麻烦
+
+```js
+const user1 = {
+  name: 'penguin',
+  saidName() {
+    console.log(this.name);
+  },
+};
+const user2 = {
+  name: 'fox',
+  saidName() {
+    console.log(this.name);
+  },
+};
+```
+
+使用工厂函数简化上面相同属性对象的创建
+
+```js
+function creatUser(name) {
+  return {
+    name,
+    saidName() {
+      console.log(this.name);
+    },
+  };
+}
+let user1 = createUser('lion');
+let user2 = createUser('elephant');
+```
+
+### 构造函数
+
+和工厂函数类似，_不过它的上下文是新的对象实例_
+
+- 构造函数名使用大驼峰命名，这个有点像 class 的命名方式
+- this 指的是当前创建的对象
+- 不需要返回 this 系统自动会完成，像 class 中的构造函数不写的话会自动加上执行
+- 实例需要使用 new 来创建
+
+```js
+function CreateUser(name) {
+  this.name = name;
+  this.saidName = () => {
+    console.log(this.name);
+  };
+  // return this 系统自动返回
+}
+let user1 = new CreateUser('bear');
+let user2 = new CreateUser('bee');
+```
+
+当构造函数返回对象了，此时的实例的对象就是返回的构造对象，和普通的函数返回值就一样了，这样的构造函数就和普通的函数没啥区别了
+
+```js
+function Animal(name) {
+  this.name = name;
+  this.saidName = function () {
+    console.log(this.name);
+  };
+  return {};
+}
+let animal = new Animal('hanhan');
+console.log(animal); // {}
+```
+
+### 对象函数
+
+可以使用内置的构造函数来创建函数，不推荐这种写法
+
+```js
+const User = new Function(
+  `name`,
+  `
+this.name=name;
+this.show = function(){
+  console.log(this.name)
+}
+`,
+);
+```
+
+## 抽象特性
+
+将复杂功能隐藏在内部，只开放少量不会影响对象内部的复杂逻辑的方法，这好比电话只有按钮，内部的很多的电子原件，交互逻辑都不需要用户了解。
+
+### 问题分析
+
+将下列的对象属性封装到构造函数内部
+
+```js
+function Penguin(name, age) {
+  this.name = name;
+  this.age = age;
+  this.info = () => {
+    return this.age > 70 ? 'old' : 'young';
+  };
+  this.about = () => `${this.name} is ${this.info()}`;
+}
+let penguin = new Penguin('bobo', 2);
+console.log(penguin.info); // young
+```
+
+### 抽象封装
+
+上面的例子有个问题，构造函数的内部的属性了方法都能在外部访问到，无法达到只向外提供指定的方法。_这里我们需要借助闭包的特性对对象进行抽象处理_
+
+```js
+function Penguin(name, age) {
+  let data = { name, age };
+  let info = () => {
+    return data.age > 70 ? 'old' : 'yong';
+  };
+  this.about = () => `${data.name} is ${info()}`;
+}
+let penguin = new Penguin('bobo', 2);
+console.log(penguin.info()); //penguin.info is not a function
+```
+
+## 属性特征
+
+属性特征有 4 种
+
+- configurable 能否使用 delete、能否修改属性特征、能否访问属性 默认值 true
+- enumerable 对象属性是否可以通过 for in 循环，或者 Object.keys()获取 默认值 true
+- writable 对象属性是否可以修改 默认值 true
+- value 对象的默认值 undefined
+
+### 查看特征
+
+Object.getOwnPropertyDescriptor 查看对象属性的描述
+
+```js
+const penguin = {
+  name: 'commit',
+  age: 2,
+};
+let desc = Object.getOwnPropertyDescriptor(penguin, 'age');
+console.log(JSON.stringify(desc, null, 2));
+// {
+//   "value": 2,
+//   "writable": true,
+//   "enumerable": true,
+//   "configurable": true
+// }
+let desc = Object.getOwnPropertyDescriptors(penguin);
+console.log(JSON.stringify(desc, null, 2));
+// {
+//   "name": {
+//     "value": "commit",
+//     "writable": true,
+//     "enumerable": true,
+//     "configurable": true
+//   },
+//   "age": {
+//     "value": 2,
+//     "writable": true,
+//     "enumerable": true,
+//     "configurable": true
+//   }
+// }
+```
+
+### 设置特征
+
+使用 Object.defineProperty 修改属性的特性，通过下面的设置属性 name 将不能被遍历、删除、修改
+
+```js
+const jojo = {
+  name: 'penguin',
+};
+Object.defineProperty(jojo, 'name', {
+  value: '🐧',
+  writable: false,
+  enumerable: false,
+  configurable: false,
+});
+// 不允许修改
+jojo.name = 'fox';
+// 不能遍历
+Object.keys(jojo);
+// 不允许删除
+delete jojo.name;
+// 不允许配置
+Object.defineProperty(jojo, 'name', {
+  value: 'bear',
+  writable: true,
+  enumerable: false,
+  configurable: false,
+});
+```
+
+使用 Object.defineProperties 可以设置多个属性
+
+```js
+let penguin = {};
+Object.defineProperties(penguin, {
+  name: { value: 'woff', writable: false },
+  age: { value: 2 },
+});
+console.log(penguin); // {name:'woff',age:2}
+penguin.name = 'penguin'; // 修改无效不会报错
+console.log(penguin.name); // woff
+```
+
+### 禁止添加
+
+preventExtensions 禁止扩展
+
+```js
+'use strict';
+const user = { name: 'penguin' };
+Object.preventExtensions(user);
+user.age = 2; // Error
+```
+
+isExtensible 是否可以扩展
+
+```js
+'use strict';
+let penguin = { name: 'penguin' };
+console.log(Object.isExtensible(penguin)); // true
+Object.preventExtensions(user);
+console.log(Object.isExtensible(penguin)); // false
+```
+
+### 封闭对象
+
+Object.seal() 封闭一个对象，阻止添加新的属性并且将所有的属性设置为 configurable:false
+
+- 不能新增属性
+- 不能删除，重新配置属性 改变 configurable 的值
+- 可以遍历，读取修改已有的属性
+  Object.isSeal() 用来判断对象是否被封闭
+
+```js
+'use strict';
+let penguin = { name: 'fox', age: 2 };
+Object.seal(penguin);
+penguin.name = 'extensions';
+console.log(Object.isSeal(penguin)); // true
+```
+
+### 冻结对象
+
+Object.freeze 冻结对象后不允许添加、删除、修改属性，writable、configurable 都为 false,_enmerable:true_
+
+```js
+'use strict';
+let penguin = { name: 'fox', age: 2 };
+Object.freeze(penguin);
+console.log(Object.isFrozen(penguin)); // true
+console.log(penguin.age); // 2
+penguin.age = 5; // Error
 ```
