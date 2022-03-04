@@ -861,3 +861,312 @@ console.log(Object.isFrozen(penguin)); // true
 console.log(penguin.age); // 2
 penguin.age = 5; // Error
 ```
+
+## 属性访问器
+
+getter 方法用于获取属性值，setter 方法用于设置属性值
+
+- 用于避免错误的赋值
+- 需要动态监测值的改变
+- 属性只能在访问器和普通属性选其一，不能同时存在
+
+### getter/setter
+
+对用户的年龄数据使用访问器访问设置
+
+```js
+'use strict'
+const user = {
+  data:{name:'penguin',age:undefined},
+  set age(value){
+    if(typeof value !='number' || value>100 || value<0){
+      throw new Error('年龄格式错误')
+    }
+    this.data.age = value
+  }
+  get age(){
+    return `年龄是:${this.data.age}`
+  }
+  }
+  user.age = 99
+  console.log(user.age)
+```
+
+使用 getter 设置只读课程总价
+
+```js
+let lesson = {
+  lists: [
+    { name: 'vue', price: 100 },
+    { name: 'mysql', price: 80 },
+    { name: 'nodejs', price: 90 },
+  ],
+  get total() {
+    return this.lists.reduce((t, pru) => t + pru.price, 0);
+  },
+};
+console.log(lesson.total); // 270
+```
+
+使用 get 和 set 对 token 进行管理
+
+```js
+const Request = {
+  get token(){
+    let currentToken = localStorage.getItem('token')
+    if(!currentToken){
+      alert('请登录获取token')
+    }else{
+      return currentToken
+    }
+  }
+
+  set token(){
+    localStorage.setItem('token')
+  }
+}
+```
+
+定义内部私有变量,这种只是约定上的私用变量，无法真正达到私有
+
+```js
+let penguin = {
+  get name() {
+    return this._name;
+  },
+  set name(value) {
+    if (value.length < 3) {
+      throw new Error('username length min 3');
+    }
+    this._name = value;
+  },
+};
+penguin.name = 'penguin';
+console.log(penguin.name);
+console.log(penguin); // {_name:'penguin',name:'penguin'}
+// 通过改变 peguin._name 还是能改变name 的值
+```
+
+### 访问器描述符
+
+使用 defineProperty 可以模拟定义私有属性，从而使用面向对象的抽象特征
+
+```js
+function User(name, age) {
+  let data = { name, age };
+  Object.defineProperties(this, {
+    name: {
+      get() {
+        return data.name;
+      },
+      set(value) {
+        data.name;
+      },
+    },
+    age: {
+      get() {
+        return data.age;
+      },
+      set(value) {
+        data.age;
+      },
+    },
+  });
+}
+```
+
+使用 class 语法糖实现
+
+```js
+const DATA = Symbol();
+class User {
+  constructor(name, age) {
+    this[DATA] = { name, age };
+  }
+  get name() {}
+  set name(value) {
+    this[DATA].name = value;
+  }
+  get age() {}
+  set age(value) {}
+}
+```
+
+### 闭包访问器
+
+下面结合闭包特性对属性进行访问控制
+
+- 访问器定义在函数中，并接收参数 v
+- 在 get()中通过闭包返回 v
+- 在 set()中修改 v,这会影响 get()访问的闭包数据 v
+
+```js
+let data = { name: 'penguin' };
+for (const [key, value] of Object.entries(data)) {
+  observer(data, key, value);
+}
+function observer(data, key, value) {
+  Object.defineProperty(data, key, {
+    get() {
+      return v;
+    },
+    set(value) {
+      v = value;
+    },
+  });
+}
+```
+
+## 代理拦截
+
+代理（拦截器）是针对对象的访问控制，setter/getter 是对单个对象属性的控制，而代理是对整个对象的控制
+
+- 读写属性时代码更加简洁
+- 对象的多个属性控制统一交给代理完成
+- 严格模式下 set 必须返回布尔值
+
+### 使用方法
+
+```js
+'use strict'
+const penguin = {name:'penguin'}
+const proxy = new Proxy(penguin,{
+  get(obj,property){
+    return obj[property]
+  }
+  set(obj,property,value){
+    obj[property] = value
+    return true
+  }
+})
+proxy.age = 10
+console.log(penguin) // {name:'penguin',age:10}
+```
+
+### 代理函数
+
+如果代理以函数方式执行时，会执行代理中定义的 apply 方法
+
+- 参数（代理函数，上下文对象，形参）
+  下面代理函数执行的时间
+
+```js
+function factorial(num) {
+  return num == 1 ? 1 : num * factorial(num - 1);
+}
+let proxy = new Proxy(factorial, {
+  apply(fun, obj, args) {
+    console.time('run');
+    fun.apply(obj, args);
+    console.timeEnd('run');
+  },
+});
+proxy.apply(this, [5]);
+```
+
+### 截取字符
+
+对数组代理，给数组对象中的某个属性进行截取操作
+
+```js
+const lesson = [
+  { title: '窗前明月光', category: 'p' },
+  { title: '天苍苍野茫茫风吹草地现牛羊', category: 'p' },
+];
+const stringProxy = new Proxy(lesson, {
+  get(target, key) {
+    const title = target[key].title;
+    const len = 5;
+    return title.length > 5 ? `${title.substr(0, len)}...` : title;
+  },
+});
+console.log(stringProxy[0]);
+```
+
+## JSON
+
+- json 是一种轻量级的数据交换格式，易于阅读和编写
+- 使用 json 数据格式是替换 xml 最佳方式，主流编程语言都很好的支持 json 格式
+- json 标准中要求使用双引号包裹属性，虽然有些语言不强制，不过还是要遵循标准避免出错，和 js 中的对象要区分开
+
+### 申明定义
+
+基本结构
+
+```js
+let penguin = {
+  name: 'penguin',
+  father: { name: 'fox' },
+  hobby: ['math', 'run'],
+};
+```
+
+### 序列化
+
+JSON.stringify(a,b,c)
+
+- a 表示要序列化的对象
+- b 表示要保留序列化对象中的属性
+- c 表示 tab 缩进的
+
+```js
+console.log(JSON.stringify(penguin));
+// {"name":"penguin","father":{"name":"fox"},"hobby":["math","run"]}
+```
+
+根据第二参数来指定保持的属性,如果填入的是 null 表示所有的属性都格式化
+
+```js
+console.log(JSON.stringify(penguin, ['name'])); // {"name":"penguin"}
+```
+
+第三个参数用来控制缩进的
+
+```js
+console.log(JSON.stringify(penguin, null, 4));
+```
+
+自定义对象的序列化返回
+
+```js
+let penguin = {
+  name: 'penguin',
+  father: { name: 'fox' },
+  hobby: ['math', 'run'],
+  toJSON: function () {
+    return {
+      name: this.name,
+      fatherName: this.father.name,
+    };
+  },
+};
+console.log(JSON.stringify(penguin));
+// {"name":"penguin","fatherName":"fox"}
+```
+
+### 反序列化
+
+JSON.parse(a,fun)将字符串 json 解析成对象
+
+- a 代表的是要被解析成对象的 json 字符串
+- fun 可用于对数据的自定义处理
+
+```js
+let jsonStr = JSON.stringify(penguin);
+console.log(JSON.parse(jsonStr));
+```
+
+第二个参数的使用
+
+```js
+let jsonStr = JSON.stringify(penguin);
+// {"name":"penguin","fatherName":"fox"}
+console.log(
+  JSON.parse(jsonStr, (key, value) => {
+    if (key == 'fatherName') {
+      return `little${value}`;
+    }
+    return value;
+  }),
+);
+```
